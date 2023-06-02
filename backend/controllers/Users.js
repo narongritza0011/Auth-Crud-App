@@ -107,3 +107,20 @@ export const Logout = async (req, res) => {
   res.clearCookie("refreshToken");
   return res.sendStatus(200);
 };
+
+//CRUD
+export const GetProfile = async (req, res) => {
+  try {
+    const user = await Users.findByPk(req.params.id, {
+      attributes: ["id", "name", "email", "role", "createdAt", "updatedAt"],
+    });
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

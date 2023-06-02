@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -10,6 +11,38 @@ const Register = () => {
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
+  const handleRedirectSuccess = () => {
+    Swal.fire({
+      title: "Register Successfuly",
+      text: "You will be redirected to the new page.",
+      icon: "success",
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        setTimeout(() => {
+          navigate("/"); // Redirect to the desired page
+        }, 1500);
+      },
+    });
+  };
+  const handleRedirectError = () => {
+    Swal.fire({
+      title: "Register Failed",
+      text: msg,
+      icon: "error",
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        setTimeout(() => {
+          // navigate("/"); // Redirect to the desired page
+        }, 1500);
+      },
+    });
+  };
   const Register = async (e) => {
     e.preventDefault();
 
@@ -21,11 +54,12 @@ const Register = () => {
         confPassword: confPassword,
       });
       console.log(response.data);
-
-      navigate("/");
+      handleRedirectSuccess();
+      // navigate("/");
     } catch (error) {
       if (error.response) {
-        setMsg(error.response.data.msg);
+        setMsg(error.response.data.message);
+        handleRedirectError();
       }
     }
   };
@@ -38,7 +72,7 @@ const Register = () => {
             <div className="columns is-centered">
               <div className="column is-4-desktop">
                 <form className="box" onSubmit={Register}>
-                  <p className="has-text-centered has-text-danger">{msg}</p>
+                  {/* <p className="has-text-centered has-text-danger">{msg}</p> */}
 
                   <div className="field mt-5">
                     <label className="label">Name</label>
@@ -93,6 +127,10 @@ const Register = () => {
                       Register
                     </button>
                   </div>
+                  <p className="has-text-centered">
+                    you have account? <Link to="/">Login</Link>
+                  </p>
+                  <div className="field mt-5"></div>
                 </form>
               </div>
             </div>

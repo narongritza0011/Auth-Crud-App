@@ -1,12 +1,47 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+
+  const handleRedirectSuccess = () => {
+    Swal.fire({
+      title: "Login Successfuly",
+      text: "You will be redirected to the new page.",
+      icon: "success",
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        setTimeout(() => {
+          navigate("/dashboard"); // Redirect to the desired page
+        }, 1500);
+      },
+    });
+  };
+
+  const handleRedirectError = () => {
+    Swal.fire({
+      title: "Login Failed",
+      text: msg,
+      icon: "error",
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        setTimeout(() => {
+          // navigate("/"); // Redirect to the desired page
+        }, 1500);
+      },
+    });
+  };
 
   const Auth = async (e) => {
     e.preventDefault();
@@ -17,10 +52,12 @@ const Login = () => {
         password: password,
       });
       console.log(response.data);
-      navigate("/dashboard");
+      handleRedirectSuccess();
+      // navigate("/dashboard");
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.msg);
+        handleRedirectError();
       }
     }
   };
@@ -32,9 +69,9 @@ const Login = () => {
           <div className="columns is-centered">
             <div className="column is-4-desktop">
               <form className="box" onSubmit={Auth}>
-                <p className="has-text-centered has-text-danger">{msg}</p>
+                {/* <p className="has-text-centered has-text-danger">{msg}</p> */}
                 <div className="field mt-5">
-                  <label className="label">Email or Username</label>
+                  <label className="label">บัญชีผู้ใช้</label>
                   <div className="controls">
                     <input
                       type="text"
@@ -46,7 +83,7 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="field mt-5">
-                  <label className="label">Password</label>
+                  <label className="label">รหัสผ่าน</label>
                   <div className="controls">
                     <input
                       type="password"
@@ -59,15 +96,16 @@ const Login = () => {
                 </div>
                 <div className="field mt-5">
                   <button className="button is-success is-fullwidth">
-                    Login
+                    เข้าสู่ระบบ
                   </button>
+                  <br />
                 </div>
                 <div className="field mt-5">
                   <Link
                     to="/register"
                     className="button is-warning  is-fullwidth"
                   >
-                    Register
+                    สมัครสมาชิก
                   </Link>
                 </div>
               </form>

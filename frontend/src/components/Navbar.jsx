@@ -1,6 +1,9 @@
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Logo from "../assets/images/logo-round.png";
+import { BsFillPersonFill, BsBoxArrowRight } from "react-icons/bs";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const Logout = async () => {
@@ -14,18 +17,14 @@ const Navbar = () => {
 
   return (
     <nav
-      className="navbar is-light"
+      className="navbar box is-warning"
       role="navigation"
       aria-label="main navigation"
     >
       <div className="container">
         <div className="navbar-brand">
           <Link className="navbar-item" to="/dashboard">
-            <img
-              src="https://bulma.io/images/bulma-logo.png"
-              width="112"
-              height="28"
-            />
+            <img src={Logo} width="100%" height="100%" />
           </Link>
 
           <Link
@@ -42,17 +41,24 @@ const Navbar = () => {
         </div>
 
         <div id="navbarBasicExample" className="navbar-menu">
-          <div className="navbar-start">
-            <Link to="/dashboard" className="navbar-item">
-              Dashboard
+          <div className="navbar-start ">
+            <Link to="/dashboard" className="navbar-item ">
+              หน้าหลัก
+            </Link>
+            <Link to="/dashboard" className="navbar-item ">
+              พนักงาน
             </Link>
           </div>
 
           <div className="navbar-end">
             <div className="navbar-item">
               <div className="buttons">
-                <button onClick={Logout} className="button is-light">
-                  Log Out
+                <Link to="/profile" className="button is-white">
+                  <BsFillPersonFill />
+                </Link>
+
+                <button onClick={Logout} className="button is-white">
+                  <BsBoxArrowRight />
                 </button>
               </div>
             </div>
