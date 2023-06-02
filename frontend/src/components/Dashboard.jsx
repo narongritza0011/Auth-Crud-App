@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
   const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     refreshToken();
@@ -25,6 +26,10 @@ const Dashboard = () => {
       setToken(response.data.accessToken);
       const decoded = jwt_decode(response.data.accessToken);
       //   console.log(decoded);
+      localStorage.setItem({ userId: decoded.userId });
+      
+      setUserId(decoded.userId);
+      console.log(decoded.userId);
       setName(decoded.name);
       setExpire(decoded.exp);
     } catch (error) {
@@ -68,7 +73,7 @@ const Dashboard = () => {
       <Navbar />
 
       <div className="container">
-        <h1 className="title ">Welcome : {name}</h1>
+        <h1 className="title ">Welcome : {name}  {userId}</h1>
         <div className="container mt-5 box">
           <table className="table is-striped is-fullwidth">
             <thead>

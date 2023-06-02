@@ -9,17 +9,24 @@ const Profile = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
-  const [userId, setUserId] = useState();
-  const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [users, setUsers] = useState({
+    name: "",
+    email: "",
+    role: "",
+    updatedAt: "",
+  });
   const [isedit, setIsedit] = useState(true);
+  //   const [date, setDate] = useState("");
 
   useEffect(() => {
     refreshToken();
-
-    getProfile();
+    if (userId) {
+      getProfile();
+    }
     // console.log(users);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   const refreshToken = async () => {
     try {
@@ -31,12 +38,12 @@ const Profile = () => {
 
       // console.log('เงื่อน : ', decoded.length == 0)
       // console.log("object : log   ",Object.values(decoded))
-      console.log("user id decoded naa : ", decoded.userId);
+      //   console.log("user id decoded naa : ", decoded.userId);
 
       //การทำ exception  ดัก error
-      if (decoded == null || decoded.length == 0) {
-        console.log("decoded = เป็นค่าว่าง");
-      }
+      //   if (decoded == null || decoded.length == 0) {
+      //     console.log("decoded = เป็นค่าว่าง");
+      //   }
 
       setUserId(decoded.userId);
 
@@ -59,7 +66,7 @@ const Profile = () => {
         config.headers.Authorization = `Bearer ${response.data.accessToken}`;
         setToken(response.data.accessToken);
         const decoded = jwt_decode(response.data.accessToken);
-        // setUserId(decoded.userId);
+
         // setName(decoded.name);
         setExpire(decoded.exp);
       }
@@ -71,6 +78,7 @@ const Profile = () => {
   );
 
   const getProfile = async () => {
+    // console.log("user id :", userId);
     const response = await axios.get(
       `http://localhost:5000/api/profile/${userId}`,
       {
@@ -79,10 +87,24 @@ const Profile = () => {
         },
       }
     );
-    setUsers(response.data);
-  };
 
-  console.log("user id :", userId);
+    setUsers(response.data);
+
+    // const d = new Date();
+    // let text = d.toString();
+    // console.log(text);
+
+    // let Newdate = new Date(response.data.updatedAt).toUTCString();
+    // console.log(Newdate);
+
+    // var DateFull = Newdate.addHours(7);
+
+    // setDate(DateFull);
+
+    //     let date = getDateFromString('2011-07-14 11:23:00');
+    // console.log(date)
+    // setDate(getDateFromString('2011-07-14 11:23:00'))
+  };
 
   const switchEdit = () => {
     setIsedit(!isedit);
@@ -93,7 +115,7 @@ const Profile = () => {
       <Navbar />
 
       <div className="container">
-        {users.id}
+        {/* {users.id} */}
         <h1 className="title ">โปรไฟล์</h1>
 
         {isedit ? (
@@ -111,6 +133,10 @@ const Profile = () => {
                   type="text"
                   value={users.name}
                   name="name"
+                  onChange={(e) =>
+                    setUsers({ ...users, [e.target.name]: e.target.value })
+                  }
+                  
                 />
               </div>
             </div>
@@ -122,7 +148,10 @@ const Profile = () => {
                   type="text"
                   value={users.email}
                   name="email"
-                  readOnly
+                  onChange={(e) =>
+                    setUsers({ ...users, [e.target.name]: e.target.value })
+                  }
+                  disabled
                 />
               </div>
             </div>
@@ -133,6 +162,9 @@ const Profile = () => {
                   className="input"
                   type="text"
                   value={users.role}
+                  onChange={(e) =>
+                    setUsers({ ...users, [e.target.name]: e.target.value })
+                  }
                   disabled
                 />
               </div>
@@ -144,6 +176,9 @@ const Profile = () => {
                   className="input"
                   type="text"
                   value={users.updatedAt}
+                  onChange={(e) =>
+                    setUsers({ ...users, [e.target.name]: e.target.value })
+                  }
                   disabled
                 />
               </div>

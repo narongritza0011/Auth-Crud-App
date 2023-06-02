@@ -15,9 +15,9 @@ router.get("/users", verifyToken, getUsers);
 router.post("/register", Register);
 router.post("/login", Login);
 router.get("/token", refreshToken);
-router.delete("/logout",verifyToken, Logout);
+router.delete("/logout", verifyToken, Logout);
 
 //crud
-router.get("/api/profile/:id", GetProfile);
+router.get("/api/profile/:id", verifyToken, GetProfile);
 
 export default router;
