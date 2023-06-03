@@ -6,9 +6,11 @@ import { BsFillPersonFill, BsBoxArrowRight } from "react-icons/bs";
 
 const Navbar = () => {
   const navigate = useNavigate();
+
   const Logout = async () => {
     try {
       await axios.delete("http://localhost:5000/logout");
+      localStorage.clear();
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -45,7 +47,7 @@ const Navbar = () => {
             <Link to="/dashboard" className="navbar-item ">
               หน้าหลัก
             </Link>
-            <Link to="/dashboard" className="navbar-item ">
+            <Link to="/admin/users" className="navbar-item ">
               พนักงาน
             </Link>
           </div>

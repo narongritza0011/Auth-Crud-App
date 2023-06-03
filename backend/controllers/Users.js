@@ -2,6 +2,7 @@ import Users from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+//auth
 export const getUsers = async (req, res) => {
   try {
     const users = await Users.findAll({
@@ -46,6 +47,7 @@ export const Login = async (req, res) => {
         email: req.body.email,
       },
     });
+
     const match = await bcrypt.compare(req.body.password, user[0].password);
     if (!match) return res.status(400).json({ msg: "รหัสผ่านไม่ถูกต้อง !" });
     const userId = user[0].id;
@@ -108,7 +110,8 @@ export const Logout = async (req, res) => {
   return res.sendStatus(200);
 };
 
-//CRUD
+//Profile
+//Get
 export const GetProfile = async (req, res) => {
   try {
     const user = await Users.findByPk(req.params.id, {
@@ -121,6 +124,23 @@ export const GetProfile = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+//Update
+export const UpdateProfile = async (req, res) => {
+  try {
+    const user = await Users.findByPk(req.params.id);
+    if (user) {
+      const { name } = req.body;
+      await user.update({ name });
+      res.json(user);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };

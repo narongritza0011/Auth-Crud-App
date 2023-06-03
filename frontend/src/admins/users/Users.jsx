@@ -1,13 +1,14 @@
-import Navbar from "./Navbar";
+import Navbar from "../../components/Navbar";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Footer from "./Footer";
+import Footer from "../../components/Footer";
+import { BsFillTrashFill } from "react-icons/bs";
+import DateTH from "../../functions/FormateDatetimeTH.js";
 
-const Dashboard = () => {
+const Users = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
   const [users, setUsers] = useState([]);
@@ -26,12 +27,6 @@ const Dashboard = () => {
       const decoded = jwt_decode(response.data.accessToken);
       // console.log(decoded);
 
-      //set id ไปที่ localStorage
-      if (decoded.userId !== "") {
-        localStorage.setItem("userId", decoded.userId);
-      }
-
-      setName(decoded.name);
       setExpire(decoded.exp);
     } catch (error) {
       if (error.response) {
@@ -51,7 +46,6 @@ const Dashboard = () => {
         setToken(response.data.accessToken);
         const decoded = jwt_decode(response.data.accessToken);
 
-        setName(decoded.name);
         setExpire(decoded.exp);
       }
       return config;
@@ -62,35 +56,70 @@ const Dashboard = () => {
   );
 
   const getUsers = async () => {
-    const response = await axiosJWT.get("http://localhost:5000/api/users", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosJWT.get(
+      "http://localhost:5000/api/users/list",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     setUsers(response.data);
+  };
+
+  const deleteUserById = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/users/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
       <Navbar />
-
       <div className="container">
-        <h1 className="title ">Welcome : {name}</h1>
+        <h1 className="title ">รายการพนักงาน</h1>
         <div className="container mt-5 box">
           <table className="table is-striped is-fullwidth">
             <thead>
               <tr>
-                <th>No</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>ลำดับ</th>
+                <th>ชื่อ</th>
+                <th>บัญชี</th>
+                <th>วันเวลาที่สร้าง</th>
+                <th>วันเวลาที่อัพเดท</th>
+                <th>จัดการ</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{index + 1}</td>
+                  <td>
+                    <Link to={`/admin/users/${user.id}`}>{index + 1}</Link>
+                  </td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
+                  <td>{DateTH(user.createdAt)}</td>
+                  <td>{DateTH(user.updatedAt)}</td>
+
+                  <td>
+                    <button
+                      className="button is-danger"
+                      onClick={() => deleteUserById(user.id)}
+                    >
+                      <BsFillTrashFill />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -102,4 +131,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Users;

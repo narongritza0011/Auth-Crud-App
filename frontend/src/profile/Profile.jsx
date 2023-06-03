@@ -5,6 +5,8 @@ import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BsPencilSquare, BsFillEyeFill } from "react-icons/bs";
+import DateTH from "../functions/FormateDatetimeTH.js";
+
 const Profile = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
@@ -16,8 +18,8 @@ const Profile = () => {
     role: "",
     updatedAt: "",
   });
-  const [isedit, setIsedit] = useState(true);
-  //   const [date, setDate] = useState("");
+  const [isedit, setIsedit] = useState(false);
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     refreshToken();
@@ -33,21 +35,8 @@ const Profile = () => {
       const response = await axios.get("http://localhost:5000/token");
       setToken(response.data.accessToken);
       const decoded = jwt_decode(response.data.accessToken);
-
-      //   console.log(decoded);
-
-      // console.log('เงื่อน : ', decoded.length == 0)
-      // console.log("object : log   ",Object.values(decoded))
-      //   console.log("user id decoded naa : ", decoded.userId);
-
-      //การทำ exception  ดัก error
-      //   if (decoded == null || decoded.length == 0) {
-      //     console.log("decoded = เป็นค่าว่าง");
-      //   }
-
-      setUserId(decoded.userId);
-
       //   setName(decoded.name);
+      setUserId(localStorage.getItem("userId"));
       setExpire(decoded.exp);
     } catch (error) {
       if (error.response) {
@@ -90,20 +79,24 @@ const Profile = () => {
 
     setUsers(response.data);
 
-    // const d = new Date();
-    // let text = d.toString();
-    // console.log(text);
+    setDate(DateTH(response.data.updatedAt));
+  };
 
-    // let Newdate = new Date(response.data.updatedAt).toUTCString();
-    // console.log(Newdate);
-
-    // var DateFull = Newdate.addHours(7);
-
-    // setDate(DateFull);
-
-    //     let date = getDateFromString('2011-07-14 11:23:00');
-    // console.log(date)
-    // setDate(getDateFromString('2011-07-14 11:23:00'))
+  const updateProfile = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/profile/${userId}`,
+        users,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const switchEdit = () => {
@@ -122,78 +115,82 @@ const Profile = () => {
           <div className="container mt-5 box">
             <div onClick={switchEdit} style={{ cursor: "pointer" }}>
               <span className="is-pulled-right m-10">
-                <BsPencilSquare />
+                <BsFillEyeFill />
               </span>
             </div>
-            <div className="field">
-              <label className="label">ชื่อผู้ใช้</label>
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  value={users.name}
-                  name="name"
-                  onChange={(e) =>
-                    setUsers({ ...users, [e.target.name]: e.target.value })
-                  }
-                  
-                />
+            <form onSubmit={updateProfile}>
+              <div className="field">
+                <label className="label">ชื่อผู้ใช้</label>
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    value={users.name}
+                    name="name"
+                    onChange={(e) =>
+                      setUsers({ ...users, [e.target.name]: e.target.value })
+                    }
+                  />
+                </div>
               </div>
-            </div>
-            <div className="field">
-              <label className="label">บัญชีผู้ใช้</label>
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  value={users.email}
-                  name="email"
-                  onChange={(e) =>
-                    setUsers({ ...users, [e.target.name]: e.target.value })
-                  }
-                  disabled
-                />
+              <div className="field">
+                <label className="label">บัญชีผู้ใช้</label>
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    value={users.email}
+                    name="email"
+                    onChange={(e) =>
+                      setUsers({ ...users, [e.target.name]: e.target.value })
+                    }
+                    disabled
+                  />
+                </div>
               </div>
-            </div>
-            <div className="field">
-              <label className="label">ระดับผู้ใช้</label>
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  value={users.role}
-                  onChange={(e) =>
-                    setUsers({ ...users, [e.target.name]: e.target.value })
-                  }
-                  disabled
-                />
+              <div className="field">
+                <label className="label">ระดับผู้ใช้</label>
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    value={users.role}
+                    onChange={(e) =>
+                      setUsers({ ...users, [e.target.name]: e.target.value })
+                    }
+                    disabled
+                  />
+                </div>
               </div>
-            </div>
-            <div className="field">
-              <label className="label">วันเวลาที่อัพเดท</label>
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  value={users.updatedAt}
-                  onChange={(e) =>
-                    setUsers({ ...users, [e.target.name]: e.target.value })
-                  }
-                  disabled
-                />
+              <div className="field">
+                <label className="label">วันเวลาที่อัพเดท</label>
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    value={date}
+                    onChange={(e) =>
+                      setUsers({ ...users, [e.target.name]: e.target.value })
+                    }
+                    disabled
+                  />
+                </div>
               </div>
-            </div>
-            <div className="field mt-5">
-              <button className="button is-success is-fullwidth">
-                บันทึกข้อมูล
-              </button>
-            </div>
+              <div className="field mt-5">
+                <button
+                  type="submit"
+                  className="button is-success is-fullwidth"
+                >
+                  บันทึกข้อมูล
+                </button>
+              </div>
+            </form>
           </div>
         ) : (
           <div className="container mt-5 box">
             <div onClick={switchEdit} style={{ cursor: "pointer" }}>
               <span className="is-pulled-right m-10">
-                <BsFillEyeFill />
+                <BsPencilSquare />
               </span>
             </div>
             <div className="field">
@@ -217,7 +214,7 @@ const Profile = () => {
             <div className="field">
               <label className="label">วันเวลาที่อัพเดท</label>
               <div className="control">
-                <h2 className="subtitle">{users.updatedAt}</h2>
+                <h2 className="subtitle">{date}</h2>
               </div>
             </div>
           </div>
