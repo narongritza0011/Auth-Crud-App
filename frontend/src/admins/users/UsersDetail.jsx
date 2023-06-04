@@ -81,10 +81,11 @@ const UsersDetail = () => {
     setDate(DateTH(response.data.updatedAt));
   };
 
-  const updateProfile = async () => {
+  const updateUserById = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/profile/${userId}`,
+        `http://localhost:5000/api/users/${userId}`,
         users,
         {
           headers: {
@@ -92,7 +93,8 @@ const UsersDetail = () => {
           },
         }
       );
-      console.log(response.data);
+      // console.log(response.data);
+      navigate("/admin/users");
     } catch (error) {
       console.error(error);
     }
@@ -106,7 +108,7 @@ const UsersDetail = () => {
         {/* {users.id} */}
         <h1 className="title ">เเก้ไขข้อมูลพนักงาน</h1>
         <div className="container mt-5 box">
-          <form onSubmit={updateProfile}>
+          <form onSubmit={updateUserById}>
             <div className="field">
               <label className="label">ชื่อผู้ใช้</label>
               <div className="control">
@@ -144,13 +146,14 @@ const UsersDetail = () => {
                   className="input"
                   type="text"
                   value={users.role}
+                  name="role"
                   onChange={(e) =>
                     setUsers({ ...users, [e.target.name]: e.target.value })
                   }
-                  disabled
                 />
               </div>
             </div>
+
             <div className="field">
               <label className="label">วันเวลาที่อัพเดท</label>
               <div className="control">

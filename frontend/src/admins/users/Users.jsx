@@ -77,8 +77,11 @@ const Users = () => {
           },
         }
       );
+
+      setUsers(users.filter((item) => item.id !== id));
+
       console.log(response);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error(error);
     }

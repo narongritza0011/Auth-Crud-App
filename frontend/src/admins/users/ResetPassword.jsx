@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import Swal from "sweetalert2";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -60,8 +61,9 @@ const ResetPassword = () => {
     }
   );
 
-  const ResetPassword = async () => {
+  const ResetPassword = async (e) => {
     try {
+      e.preventDefault();
       const response = await axios.post(
         `http://localhost:5000/api/users/reset-password/`,
         user,
@@ -71,11 +73,28 @@ const ResetPassword = () => {
           },
         }
       );
-      console.log(response.message);
-      navigate("/");
+
+      handleRedirectSuccess(response.data.message);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleRedirectSuccess = (msg) => {
+    Swal.fire({
+      title: msg,
+      text: "You will be redirected to the new page.",
+      icon: "success",
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        setTimeout(() => {
+          navigate("/admin/users/", id); // Redirect to the desired page
+        }, 1500);
+      },
+    });
   };
 
   return (

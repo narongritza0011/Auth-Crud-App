@@ -33,7 +33,9 @@ router.put("/api/profile/:id", verifyToken, UpdateProfile);
 //user crud
 router.get("/api/users/list", verifyToken, getUsersList);
 router.get("/api/user/:id", verifyToken, GetUserById);
+
 router.put("/api/users/:id", verifyToken, UpdateUserById);
+
 router.delete("/api/users/:id", verifyToken, deleteUserById);
 router.post("/api/users/reset-password/", verifyToken, ResetPasswordUserById);
 

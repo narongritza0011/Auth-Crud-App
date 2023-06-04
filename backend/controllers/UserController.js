@@ -32,8 +32,14 @@ export const UpdateUserById = async (req, res) => {
   try {
     const user = await Users.findByPk(req.params.id);
     if (user) {
-      const { name } = req.body;
-      await user.update({ name });
+      const { name, role } = req.body;
+
+      // //เช็คemail ซ้ำไหม
+      // const CheckEmail = await Users.findOne({ where: { email } });
+      // if (CheckEmail != null) {
+      //   return res.status(401).json({ message: "มีบัญชีผู้ใช้นี้เเล้ว!" });
+      // }
+      await user.update({ name, role });
       res.json(user);
     } else {
       res.status(404).json({ message: "User not found" });
@@ -74,7 +80,8 @@ export const ResetPasswordUserById = async (req, res) => {
       return res.status(400).json({ message: "รหัสผ่านไม่ตรงกัน" });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: "รหัสผ่านไม่ถูกต้อง !" });
+    if (!match)
+      return res.status(400).json({ message: "รหัสผ่านไม่ถูกต้อง !" });
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(NewPassword, salt);
 
